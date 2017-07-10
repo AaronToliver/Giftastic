@@ -1,0 +1,16 @@
+ <script type="text/javascript">
+    // Example queryURL for Giphy API
+    var apiKey = "46bafe89ff3a4d47bf9a382d6a0e1005"
+
+    var queryURL = "http://api.giphy.com/v1/gifs/search?api_key=";
+
+    var cities = ["Charlotte", "Paris", "New York", "Tokyo", "Cairo"];
+
+    $.ajax({
+      url: queryURL,
+      method: 'GET',
+      data: {q: "cities", rating: "g", limit: 10, api_key: apiKey}
+    }).done(function(response) {
+      console.log(response);
+    });
+    </script>

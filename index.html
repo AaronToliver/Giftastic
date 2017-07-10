@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Giftastic</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+  	<div class="container-fluid text-center">
+  		<h1>City Search</h1>
+  		<!-- Cities will get dumped here -->
+  		
+
+  		<form id="city-form" class="text-center">
+  			<label for = "city-input"></label>
+  			<input type="text" id="city-input">
+        <br>
+        <br>
+
+  			<!-- Button triggers new city to be added -->
+  			<input type="submit" id="add-city" value="Select City" class="btn btn-danger">
+        </form>
+        <br>
+        <br>
+        <div id="cities-select"></div>
+        <br>
+        <div id="cities-view"></div>
+    </div>
+  
+	
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    // Example queryURL for Giphy API
+    var cities = ["Charlotte NC", "Paris", "New York", "Tokyo", "Cairo"];
+
+    function displayCityInfo(){
+      event.preventDefault();
+
+    var cityData = $(this).attr("data");
+    var queryURL = "http://api.giphy.com/v1/gifs/search?api_key=46bafe89ff3a4d47bf9a382d6a0e1005&limit=5&rating=g&q=" + cityData;
+
+    $.ajax({
+      url: queryURL,
+      method: 'GET',
+      
+    }).done(function(response) {
+      console.log(response);
+
+      var results = response.data;
+
+      // Looping over every result item
+          for (var i = 0; i < results.length; i++) {
+
+            // Only taking action if the photo has an appropriate rating
+            if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+
+      //div to hold city
+      var cityDiv = $("<div class=city>");
+
+      //storing rating data
+      var rating = results[i].rating;
+
+      //element to display rating
+      var pRating = $("<p>").text("Rating: "+ rating);
+
+      //append
+      cityDiv.append(pRating);
+
+      //image tag
+      var cityImage = $("<img>");
+
+      cityImage.attr("src", results[i].images.fixed_height.url);     
+
+      $("#cities-view").prepend(cityImage);
+      $("#cities-view").prepend(cityDiv);
+    }
+  }
+    });
+
+  }
+
+  
+
+    function renderButtons() {
+    	//reseting buttons after adding new ones
+    	$("#cities-select").empty();
+
+    	//for loop for cities
+    	for (var i = 0; i < cities.length; i++) {
+    		
+    		//dynamic generation of buttons for every city in the array
+    		var c = $("<button>");
+
+    		c.addClass("city btn btn-default");
+
+    		c.attr("data", cities[i]);
+
+    		c.text(cities[i]);
+
+    		$("#cities-select").append(c);
+    	}
+
+    }
+
+    //events when a city button is clicked
+    $("#add-city").on("click", function(event) {
+      event.preventDefault();
+      //input from textbox
+      var newCity = $("#city-input").val().trim();
+      //adding to array
+      cities.push(newCity);
+      //calling renderButtons
+      renderButtons();
+
+    })
+
+    //moment of truth
+    $(document).on("click", ".city", displayCityInfo);
+
+
+    renderButtons();
+
+    //Several issues here: Trying to get the previous submission to clear, keeps adding gifs to the bottom of the page. I was looking for the clear function, but can't seem to find the right place to put it. 
+  </script>
+
+  		</form>
+	</div>
+</body>
+</html>
